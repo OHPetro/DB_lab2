@@ -1,0 +1,39 @@
+version: '3.7.4'
+services:
+  app:
+    build: ./app
+    depends_on:
+      - db
+    networks:
+      - MY
+    environment:
+      PYTHONUNBUFFERED: 1
+  db:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "PetroIsFucker55"
+      POSTGRES_DB: "DB_labs"
+      POSTGRES_HOST: "db"
+#      POSTGRES_HOST_AUTH_METHOD: "trust"
+    ports:
+      - '5432:5432'
+    networks:
+      - MY
+
+  flyway:
+    image: flyway/flyway:8.5.8-alpine
+    command:
+      -url=jdbc:postgresql://db:5432/DB_labs -user=postgres -password=PetroIsFucker55 migrate
+    volumes:
+      - .:/flyway/sql
+      - ./flyway/flyway.conf:/flyway/conf/flyway.conf
+    depends_on:
+      - app
+    networks:
+      - MY
+
+
+
+networks:
+  MY:
